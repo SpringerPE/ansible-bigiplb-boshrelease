@@ -168,6 +168,15 @@ address of each one, so if a node has multiple IP addresses the one with the
 default GW will be taken.
 
 
+# Design
+
+All variables used in this release are are defined in the ansible inventory file,
+so the playbooks are usable outside this release (useful for testing) by 
+defining a similar inventory.
+
+All actions/playbooks (thanks to ansible) are idempotent.
+
+
 # Author
 
 José Riguera López (SpringerNature) (jose.riguera@springer.com)
