@@ -1,4 +1,4 @@
-# Add-on BOSH Release for [ansible-boshrelease](https://github.com/SpringerPE/ansible-bigiplb-boshrelease)
+# Add-on BOSH Release for [ansible-boshrelease](https://github.com/SpringerPE/ansible-boshrelease)
 
 Add-on release with ansible playbooks to manage F5 BIG-IP load balancers.
 It allows you to define/update a F5 virtual server with a pool of backend nodes
@@ -13,7 +13,7 @@ Everything automatic!, just change the number of instances and run `bosh deploy`
 
 This is and add-on release, it will work only if it is deployed together with the 
 *ansible-boshrelease* on the nodes, in particular with **ansible-hook**s job.
-Have a look at [ansible-boshrelease](https://github.com/SpringerPE/ansible-bigiplb-boshrelease)
+Have a look at [ansible-boshrelease](https://github.com/SpringerPE/ansible-boshrelease)
 for the requirements and to see how it works.
 
 Considering v2 manifest style, add the new releases in the `releases` block:
@@ -179,7 +179,9 @@ All actions/playbooks (thanks to ansible) are idempotent.
 
 # Author
 
-José Riguera López (SpringerNature) (jose.riguera@springer.com)
+José Riguera López (jose.riguera@springer.com)
+
+SpringerNature Platform Engineering
 
 
 
