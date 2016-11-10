@@ -1,0 +1,21 @@
+---
+# All variables are defined in the inventory (or group_vars), so you can test
+# this playbook offline with a fake inventory, or reuse in other places
+
+# This playbook was created to run as errand by ansible-distclean job
+# available in ansible release, so it will only be triggered by that action.
+# The idea is setup/deploy all the nodes statically defined instead of
+# run each time one node is being added.
+
+- name: F5 BIGIP runall playbook taks when members are defined (run errand job)
+  hosts: f5
+  gather_facts: False
+  serial: 1
+
+  tasks:
+    - include: start.yml
+
+    - include: post-start.yml
+
+    - include: finish.yml
+

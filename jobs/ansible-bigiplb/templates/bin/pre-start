@@ -1,0 +1,11 @@
+#!/usr/bin/env bash
+#
+# change permissions of inventory to allow only root user to see the file. It
+# is just a way to mitigate security issues.
+# (ansible is executed as root user)
+
+set -e  # exit immediately if a simple command exits with a non-zero status
+
+chown -R root:root /var/vcap/jobs/ansible-bigiplb/ansible
+find /var/vcap/jobs/ansible-bigiplb/ansible/ -type f -exec chmod 0600 {} \;
+

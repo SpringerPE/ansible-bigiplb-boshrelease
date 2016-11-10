@@ -1,0 +1,24 @@
+---
+# Finish (post-deploy) tasks
+
+# TODO: Add irules
+
+- name: Define virtual server
+  bigip_virtual_server:
+    state: present
+    name: "{{ f5_vip_name }}"
+    destination: "{{ f5_vip_address }}"
+    port: "{{ f5_vip_port }}"
+    pool: "{{ f5_pool_name }}"
+    snat: "{{ f5_vip_snat | default(omit) }}"
+    description: "{{ f5_vip_description }}"
+    all_profiles: "{{ f5_vip_profiles }}"
+    enabled_vlans: "{{ f5_vip_vlans }}"
+    all_rules: "{{ f5_vip_irules | selectattr('name', 'defined') | list }}"
+    partition: "{{ f5_partition }}"
+    server: "{{ f5_server }}"
+    user: "{{ f5_user }}"
+    password: "{{ f5_pass }}"
+    validate_certs: "{{ f5_ssl_validate }}"
+  delegate_to: "{{ groups.client[0] }}"
+

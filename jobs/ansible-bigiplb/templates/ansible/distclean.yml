@@ -1,0 +1,78 @@
+---
+# All variables are defined in the inventory (or group_vars), so you can test
+# this playbook offline with a fake inventory, or reuse in other places
+
+# This playbook was created to run as errand by ansible-distclean job
+# available in ansible release, so it will only be triggered by that action.
+# The idea is clean up all the resources which could have been defined by 
+# the deployment. This playbook should run before deleting completely a deployment.
+
+- name: F5 BIGIP dist-clean playbook
+  hosts: f5
+  gather_facts: False
+  serial: 1
+
+  tasks:
+
+    - name: Delete virtual server
+      bigip_virtual_server:
+        state: absent
+        name: "{{ f5_vip_name }}"
+        destination: "{{ f5_vip_address }}"
+        port: "{{ f5_vip_port }}"
+        pool: "{{ f5_pool_name }}"
+        partition: "{{ f5_partition }}"
+        server: "{{ f5_server }}"
+        user: "{{ f5_user }}"
+        password: "{{ f5_pass }}"
+        validate_certs: "{{ f5_ssl_validate }}"
+      delegate_to: "{{ groups.client[0] }}"
+
+    - name: Get current facts for the F5 pool
+      bigip_facts:
+        filter: "{{ f5_pool_name }}"
+        include: "pool"
+        partition: "{{ f5_partition }}"
+        server: "{{ f5_server }}"
+        user: "{{ f5_user }}"
+        password: "{{ f5_pass }}"
+        validate_certs: "{{ f5_ssl_validate }}"
+      delegate_to: "{{ groups.client[0] }}"
+      register: __pool
+
+    - name: Initialize list of pool members
+      set_fact:
+        _f5_pool_members: []
+
+    - name: Set list of pool members
+      set_fact:
+        _f5_pool_members: "{{ item.value['member'] }}"
+      with_dict: "{{ __pool.ansible_facts['pool'] }}"
+
+    - name: Delete pool members
+      bigip_pool_member:
+        state: absent
+        pool: "{{ f5_pool_name }}"
+        host: "{{ item['address'].split('/')[-1] }}"
+        port: "{{ item['port'] }}"
+        partition: "{{ f5_partition }}"
+        server: "{{ f5_server }}"
+        user: "{{ f5_user }}"
+        password: "{{ f5_pass }}"
+        validate_certs: "{{ f5_ssl_validate }}"
+      with_items: "{{ _f5_pool_members }}"
+      when: _f5_pool_members is defined
+      delegate_to: "{{ groups.client[0] }}"
+
+    - name: Delete pool
+      bigip_pool:
+        state: absent
+        name: "{{ f5_pool_name }}"
+        port: "{{ f5_pool_port | default(omit) }}"
+        partition: "{{ f5_partition }}"
+        server: "{{ f5_server }}"
+        user: "{{ f5_user }}"
+        password: "{{ f5_pass }}"
+        validate_certs: "{{ f5_ssl_validate }}"
+      delegate_to: "{{ groups.client[0] }}"
+

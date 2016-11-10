@@ -1,0 +1,25 @@
+#!/usr/bin/env bash
+
+# abort script on any command that exits with a non zero value
+set -e -x
+
+# Install libraries
+mkdir -p ${BOSH_INSTALL_TARGET}/library
+libs=$(find library -maxdepth 1 -type d  ! -path library)
+if [ "${libs}" ]; then
+  echo "Adding libraries ..."
+  for lib in ${libs}; do
+      cp -av ${lib}/* ${BOSH_INSTALL_TARGET}/library/
+  done
+fi
+
+# Install roles
+mkdir -p ${BOSH_INSTALL_TARGET}/roles
+roles=$(find roles -maxdepth 1 -type d  ! -path roles)
+if [ "${roles}" ]; then
+  echo "Adding roles ..."
+  for role in ${roles}; do
+      cp -av ${role}/* ${BOSH_INSTALL_TARGET}/roles/
+  done
+fi
+

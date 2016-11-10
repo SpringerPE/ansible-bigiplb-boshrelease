@@ -1,0 +1,12 @@
+---
+# All variables are defined in the inventory (or group_vars), so you can test
+# this playbook offline with a fake inventory, or reuse in other places
+
+- name: F5 BIGIP post-deploy playbook
+  hosts: f5
+  gather_facts: False
+  serial: 1
+
+  tasks:
+    - include: finish.yml
+      when: use_bootstrap_node | bool == false

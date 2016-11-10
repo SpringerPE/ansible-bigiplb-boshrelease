@@ -1,0 +1,19 @@
+---
+# First (pre-start) tasks
+
+- name: Make sure the pool exists
+  bigip_pool:
+    state: present
+    name: "{{ f5_pool_name }}"
+    lb_method: "{{ f5_pool_lb_method }}"
+    slow_ramp_time: "{{ f5_pool_slow_ramp_time }}"
+    monitor_type: "{{ f5_pool_monitors_rule }}"
+    monitors: "{{ f5_pool_monitors }}"
+    quorum: "{{ f5_pool_monitors_quorum | default(omit) }}"
+    partition: "{{ f5_partition }}"
+    server: "{{ f5_server }}"
+    user: "{{ f5_user }}"
+    password: "{{ f5_pass }}"
+    validate_certs: "{{ f5_ssl_validate }}"
+  delegate_to: "{{ groups.client[0] }}"
+

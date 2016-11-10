@@ -1,0 +1,97 @@
+---
+name: ansible-bigiplb
+
+description: "Ansible playbooks and roles to manage F5 BIG-IP LTM using ansible-hooks job from ansible boshrelease"
+
+packages:
+- ansible-bigiplb
+
+templates:
+  bin/pre-start: bin/pre-start
+  ansible/inventory.erb: ansible/inventory
+  ansible/post-start.yml: ansible/50-post-start.yml
+  ansible/drain.yml: ansible/50-drain.yml
+  ansible/start.yml: ansible/start.yml
+  ansible/pre-start.yml: ansible/50-pre-start.yml
+  ansible/pre-bootstrap.yml: ansible/50-pre-bootstrap.yml
+  ansible/distclean.yml: ansible/50-distclean.yml
+  ansible/finish.yml: ansible/finish.yml
+  ansible/postdeploy.yml: ansible/50-postdeploy.yml
+  ansible/postdeploy-bootstrap.yml: ansible/50-postdeploy-bootstrap.yml
+  ansible/deploy.yml: ansible/deploy.yml
+
+properties:
+  ansible_bigiplb.virtual_server_name:
+    description: Virtual server name. Defaults to deployment name.
+  ansible_bigiplb.virtual_server_description:
+    description: Virtual server description.
+    default: "Automated with ansible, managed with BOSH"
+  ansible_bigiplb.virtual_server_ip:
+    description: Virtual server IP address.
+  ansible_bigiplb.virtual_server_port:
+    description: Virtual server port where it has to listen to income connections.
+  ansible_bigiplb.virtual_server_vlans:
+    description: List of enabled Vlans for the virtual server (Full path items).
+    default: []
+  ansible_bigiplb.virtual_server_profiles:
+    description: List of profiles to be used in the virtual server (all kind of profiles, http, ssl, client ... full path items)
+    default: []
+  ansible_bigiplb.virtual_server_snat:
+    description: Source network address policy. Automap or full path name of a SNAT pool.
+    default: Automap
+  ansible_bigiplb.virtual_server_state:
+    description: Force a virtual server state.
+  ansible_bigiplb.irules:
+    description: List of ordered full-path names of irules to apply to the virtual server.
+    default: []
+    example:
+    - name: "/Common/irule-01"
+    - name: "/MyPartition/irule-02"
+      content: "when HTTP_REQUEST {HTTP::redirect 'https://[HTTP::host][HTTP::uri]'}"
+  ansible_bigiplb.pool_name:
+    description: Pool name to create in the F5. Defaults to instance IP of each vm.
+  ansible_bigiplb.pool_members:
+    description: Pool members list. By defining this the node of each instance will not be added automatically.
+    example:
+    - name: external-node-01
+      ip: 192.168.1.1
+      port: 443
+    - name: external-node-02
+      ip: 192.168.1.2
+      port: 8080
+  ansible_bigiplb.pool_member_drain_timeout:
+    description: Timeout for the drain playbook.
+    default: 300
+  ansible_bigiplb.pool_members_port:
+    description: Pool members port. Defaults to virtual_server_port.
+  ansible_bigiplb.pool_lb_method:
+    description: Pool load balancing method.
+    default: round_robin
+  ansible_bigiplb.pool_service_down_action:
+    description: Sets the action to take when node goes down in pool.
+    default: reselect
+  ansible_bigiplb.pool_slow_ramp_time:
+    description: Sets the ramp-up time (in seconds) to gradually ramp up the load on newly added or freshly detected up pool members.
+    default: 0
+  ansible_bigiplb.pool_monitors:
+    description: List of Health monitors.
+    default:
+    - "/Common/tcp"
+  ansible_bigiplb.pool_monitors_rule:
+    description: Monitor rule type when there are more than one monitor, and_list or m_of_n
+    default: and_list
+  ansible_bigiplb.pool_monitors_quorum:
+    description: Monitor quorum value when monitor_type is m_of_n
+    default: 1
+  ansible_bigiplb.server:
+    description: List of F5 BIG-IP device settings to connect to (ansible inventory).
+    example:
+    - device: "ip-name-f5-device"
+      user: "admin"
+      password: "supersecurepass"
+      partition: "Common"
+      certificate: ""
+  ansible_bigiplb.use_bootstrap_node:
+    description: Optimize some tasks by avoiding repet them on every node (vip and pool creation)
+    default: True
+

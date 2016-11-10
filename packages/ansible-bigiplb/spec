@@ -1,0 +1,9 @@
+---
+name: ansible-bigiplb
+
+dependencies: []
+
+files:
+- library/**/*
+- roles/**/*
+

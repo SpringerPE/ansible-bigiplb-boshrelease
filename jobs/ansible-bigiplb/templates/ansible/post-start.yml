@@ -1,0 +1,26 @@
+---
+# All variables are defined in the inventory (or group_vars), so you can test
+# this playbook offline with a fake inventory, or reuse in other places
+
+- name: F5 BIGIP post-start playbook
+  hosts: f5
+  gather_facts: False
+  serial: 1
+
+  tasks:
+
+    - name: Add a new pool member
+      bigip_pool_member:
+        state: present
+        pool: "{{ f5_pool_name }}"
+        host: "{{ hostvars[item]['ansible_host'] }}"
+        port: "{{ hostvars[item]['port'] }}"
+        description: "{{ hostvars[item]['description'] }}"
+        partition: "{{ f5_partition }}"
+        server: "{{ f5_server }}"
+        user: "{{ f5_user }}"
+        password: "{{ f5_pass }}"
+        validate_certs: "{{ f5_ssl_validate }}"
+      delegate_to: "{{ groups.client[0] }}"
+      with_items: "{{ groups['members'] }}"
+

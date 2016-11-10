@@ -1,0 +1,86 @@
+[inventory:children]
+f5
+members
+client
+
+
+[inventory:vars]
+use_bootstrap_node=<%= p("ansible_bigiplb.use_bootstrap_node") %>
+
+
+[f5:children]
+<% if_p("ansible_bigiplb.server") do |server| %><% server.each do |device| %><%= device["device"] %><% end %><% end %>
+
+[f5:vars]
+# F5 global vars
+f5_vip_name='<% if_p("ansible_bigiplb.virtual_server_name") do |vipname| %><%= vipname %><% end.else do %><%= spec.deployment %>-<%= name %>-vip<% end %>'
+f5_vip_description="<%= p("ansible_bigiplb.virtual_server_description") %>"
+f5_vip_address=<%= p("ansible_bigiplb.virtual_server_ip") %>
+f5_vip_port=<%= p("ansible_bigiplb.virtual_server_port") %>
+f5_vip_vlans='<%= p("ansible_bigiplb.virtual_server_vlans") %>'
+f5_vip_profiles='<%= p("ansible_bigiplb.virtual_server_profiles") %>'
+f5_vip_irules='<%= p("ansible_bigiplb.irules") %>'
+<% if_p("ansible_bigiplb.virtual_server_snat") do |vipsnat| %>f5_vip_snat=<%= vipsnat %><% end %>
+<% if_p("ansible_bigiplb.virtual_server_state") do |vipstate| %>f5_vip_state=<%= vipstate %><% end %>
+f5_pool_member_drain_timeout=<%= p("ansible_bigiplb.pool_member_drain_timeout") %>
+f5_pool_name="<% if_p('ansible_bigiplb.pool_name') do |poolname| %><%= poolname %><% end.else do %><%= spec.deployment %>-<%= name %>-pool<% end %>"
+f5_pool_lb_method=<%= p("ansible_bigiplb.pool_lb_method") %>
+f5_pool_service_down_action=<%= p("ansible_bigiplb.pool_service_down_action") %>
+f5_pool_slow_ramp_time=<%= p("ansible_bigiplb.pool_slow_ramp_time") %>
+f5_pool_monitors='<%= p("ansible_bigiplb.pool_monitors") %>'
+f5_pool_monitors_rule=<%= p("ansible_bigiplb.pool_monitors_rule") %>
+<% if_p("ansible_bigiplb.pool_monitors_rule") do |quorumrule| %>
+<% if quorumrule == 'm_of_n' %>f5_pool_monitors_quorum=<%= p("ansible_bigiplb.pool_monitors_quorum") %><% end %>
+<% end %>
+
+# F5 servers
+<% p("ansible_bigiplb.server").each do |device| %>[<%= device["device"] %>]
+<%= device["device"] %><% if device["ip"] %> ansible_host=<%= device["ip"] %><% end %>
+<% end %>
+<% p("ansible_bigiplb.server").each do |device| %>[<%= device["device"] %>:vars]
+f5_server=<% if device["ip"] %><%= device["ip"] %><% else %><%= device["device"] %><% end %>
+f5_user=<%= device["user"] %>
+f5_pass=<%= device["password"] %>
+f5_partition=<% if device["partition"] %><%= device["partition"] %><% else %>Common<% end %>
+f5_ssl_validate=<% if device["certificate"] %>True<% else %>False<% end %>
+<% end %>
+
+# Pool members
+[members:children]
+instance
+nodes
+
+<% if_p("ansible_bigiplb.pool_members") do |members| %>
+# Aditional nodes
+[nodes]
+<% members.each do |member| %><%= member["name"] %> <% if member["ip"] %>ansible_host=<%= member["ip"] %><% end %>
+<% end %>
+
+<% members.each do |member| %>
+[<%= member["name"] %>]
+<% if member["port"] %>port=<%= member["port"] %>
+<% else %><% if_p("ansible_bigiplb.pool_members_port") do |poolport| %>port=<%= poolport %><% end.else_if_p("ansible_bigiplb.virtual_server_port") do |vipport| %>port=<%= vipport %><% end %><% end %>
+<% if member["description"] %>description='<%= member["description"] %>'<% end %>
+<% end %>
+
+# and current node empty
+[instance]
+
+<% end.else do %>
+# No other nodes
+[nodes]
+
+# only current node
+[instance]
+<%= spec.name %>-<%= spec.index %>-<%= spec.deployment %> ansible_host=<%= spec.address %>
+
+[instance:vars]
+description="<%= spec.name %>-<%= spec.index %>-<%= spec.deployment %> AZ=<%= spec.az %> ID=<%= spec.id %>"
+<% if_p("ansible_bigiplb.pool_members_port") do |poolport| %>port=<%= poolport %><% end.else_if_p("ansible_bigiplb.virtual_server_port") do |vipport| %>port=<%= vipport %><% end %>
+<% end %>
+
+
+# Client where run the playbooks
+[client]
+localhost ansible_python_interpreter=/var/vcap/packages/python27/bin/python ansible_connection=local ansible_become=false
+
