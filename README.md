@@ -163,16 +163,24 @@ and run `bosh run errand f5-setup`
 
 # Known issues
 
-The automatic instance management is done by each node by taking the default IP 
-address of each one, so if a node has multiple IP addresses the one with the 
+The automatic instance management is done on each node by taking the default IP 
+address of itself, so if a node has multiple IP addresses the one with the 
 default GW will be taken.
+
+If a node suddenly crashes, it won't trigger the drain actions and its IP will
+remain in the F5 LB as inactive. If Bosh resurrector is enabled, it could happen
+that a new instance gets a different IP (than the crashed node) and no process
+will remove the old IP from the F5 pool, in case of this situation, the way
+-for now- is manually delete the inactive node from the pool. The errand job
+to clean the F5 resources is not affected by this situation because it always
+gets the facts (nodes) from the F5.
 
 
 # Design
 
 All variables used in this release are are defined in the ansible inventory file,
-so the playbooks are usable outside this release (useful for testing) by 
-defining a similar inventory.
+so the playbooks are re-usable outside this release (useful for testing) by 
+re-defining a inventory with the variables needed by the playbooks.
 
 All actions/playbooks (thanks to ansible) are idempotent.
 
