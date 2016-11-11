@@ -13,13 +13,14 @@ use_bootstrap_node=<%= p("ansible_bigiplb.use_bootstrap_node") %>
 
 [f5:vars]
 # F5 global vars
+<% def getlv(h, k='name') return h.map{ |item| item[k]} end %>
 f5_vip_name='<% if_p("ansible_bigiplb.virtual_server_name") do |vipname| %><%= vipname %><% end.else do %><%= spec.deployment %>-<%= name %>-vip<% end %>'
 f5_vip_description="<%= p("ansible_bigiplb.virtual_server_description") %>"
 f5_vip_address=<%= p("ansible_bigiplb.virtual_server_ip") %>
 f5_vip_port=<%= p("ansible_bigiplb.virtual_server_port") %>
 f5_vip_vlans='<%= p("ansible_bigiplb.virtual_server_vlans") %>'
 f5_vip_profiles='<%= p("ansible_bigiplb.virtual_server_profiles") %>'
-f5_vip_irules='<%= p("ansible_bigiplb.irules") %>'
+f5_vip_irules='<%= getlv(p("ansible_bigiplb.irules")) %>'
 <% if_p("ansible_bigiplb.virtual_server_snat") do |vipsnat| %>f5_vip_snat=<%= vipsnat %><% end %>
 <% if_p("ansible_bigiplb.virtual_server_state") do |vipstate| %>f5_vip_state=<%= vipstate %><% end %>
 f5_pool_member_drain_timeout=<%= p("ansible_bigiplb.pool_member_drain_timeout") %>
@@ -51,15 +52,14 @@ instance
 nodes
 
 <% if_p("ansible_bigiplb.pool_members") do |members| %>
-# Aditional nodes
+# Aditional nodes ...
 [nodes]
 <% members.each do |member| %><%= member["name"] %> <% if member["ip"] %>ansible_host=<%= member["ip"] %><% end %>
 <% end %>
 
 <% members.each do |member| %>
 [<%= member["name"] %>]
-<% if member["port"] %>port=<%= member["port"] %>
-<% else %><% if_p("ansible_bigiplb.pool_members_port") do |poolport| %>port=<%= poolport %><% end.else_if_p("ansible_bigiplb.virtual_server_port") do |vipport| %>port=<%= vipport %><% end %><% end %>
+<% if member["port"] %>port=<%= member["port"] %><% else %><% if_p("ansible_bigiplb.pool_members_port") do |pp| %>port=<%= pp %><% end.else do %>port=<%= p("ansible_bigiplb.virtual_server_port") %><% end %><% end %>
 <% if member["description"] %>description='<%= member["description"] %>'<% end %>
 <% end %>
 
@@ -72,11 +72,12 @@ nodes
 
 # only current node
 [instance]
-<%= spec.name %>-<%= spec.index %>-<%= spec.deployment %> ansible_host=<%= spec.address %>
+# BOSH >= 258: spec.ip, else spec.address
+<%= spec.name %>-<%= spec.index %>-<%= spec.deployment %> ansible_host=<%= spec.ip %>
 
 [instance:vars]
 description="<%= spec.name %>-<%= spec.index %>-<%= spec.deployment %> AZ=<%= spec.az %> ID=<%= spec.id %>"
-<% if_p("ansible_bigiplb.pool_members_port") do |poolport| %>port=<%= poolport %><% end.else_if_p("ansible_bigiplb.virtual_server_port") do |vipport| %>port=<%= vipport %><% end %>
+<% if_p("ansible_bigiplb.pool_members_port") do |pp| %>port=<%= pp %><% end.else do %>port=<%= p("ansible_bigiplb.virtual_server_port") %><% end %>
 <% end %>
 
 

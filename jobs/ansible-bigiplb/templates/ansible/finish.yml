@@ -14,7 +14,7 @@
     description: "{{ f5_vip_description }}"
     all_profiles: "{{ f5_vip_profiles }}"
     enabled_vlans: "{{ f5_vip_vlans }}"
-    all_rules: "{{ f5_vip_irules | selectattr('name', 'defined') | list }}"
+    all_rules: "{{ f5_vip_irules }}"
     partition: "{{ f5_partition }}"
     server: "{{ f5_server }}"
     user: "{{ f5_user }}"
