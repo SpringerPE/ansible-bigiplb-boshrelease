@@ -86,6 +86,10 @@ F5: vip and pool created and nodes added to the pool. Moreover, when the
 number of the instances of the job changes, they will be added or 
 removed from the F5 pool. 
 
+Note that irules will be deleted only if they have a content, in the
+same way they were created: an irule without content means just a 
+reference (it will not be created/deleted), but if it includes a
+content, it is assumed that it has to be managed here.
 
 Deleting a deployment requires a special consideration, if you do it
 directly, the F5 will keep the VIP and pool configuration (empty). In order
@@ -113,6 +117,9 @@ the deployment, you have to define an errand job:
       virtual_server_name: "vs.docker-registry.tools.springer.com.443"
       virtual_server_ip: "10.10.35.230"
       virtual_server_port: 443
+      irules:
+      - name: "/CloudFoundry/ir.docker-registry.tools.springer.com"
+        content: -
       pool_name: "pl.docker-registry.tools.springer.com.5000"
       pool_members_port: 5000
       server:
