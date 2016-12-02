@@ -1,0 +1,16 @@
+<%=
+  params = {
+    'f5_irules' => []
+  }
+  if_p("ansible_bigiplb.irules") do |irules|
+    irules.each do |rule|
+      irule = {
+        'name' => rule['name']
+      }
+      irule['content'] = rule['content'] if rule['content']
+      irule['state'] = rule['state'] if rule['state']
+      params['f5_irules'].push(irule)
+    end
+  end
+  JSON.dump(params)
+%>

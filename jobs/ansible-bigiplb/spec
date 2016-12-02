@@ -9,7 +9,7 @@ packages:
 templates:
   bin/pre-start: bin/pre-start
   ansible/inventory.erb: ansible/inventory
-  ansible/irules.yml.erb: ansible/irules.yml
+  ansible/irules.json.erb: ansible/irules.json
   ansible/env.sh: ansible/env.sh
   ansible/post-start.yml: ansible/50-post-start.yml
   ansible/drain.yml: ansible/50-drain.yml

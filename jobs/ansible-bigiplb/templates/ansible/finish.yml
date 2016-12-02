@@ -2,7 +2,7 @@
 # Finish (post-deploy) tasks
 
 - name: Loading irules content
-  include_vars: irules.yml
+  include_vars: irules.json
 
 - name: Define irules
   bigip_irule_bigsuds:
