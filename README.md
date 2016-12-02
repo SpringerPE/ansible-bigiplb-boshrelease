@@ -55,6 +55,21 @@ finally define the `properties` of the VIP and F5 device:
       - "/CloudFoundry/docker-registry.tools.springer.com"
       irules:
       - name: "/CloudFoundry/ir.docker-registry.tools.springer.com"
+        content: |
+          when HTTP_REQUEST {
+            if {not [HTTP::header exists Docker-Distribution-Api-Version] } {
+	      HTTP::header insert "Docker-Distribution-Api-Version" "registry/2.0"
+            }
+            if {not [HTTP::header exists X-Real-IP] } {
+              HTTP::header insert "X-Real-IP" [IP::remote_addr]
+            }
+            if {not [HTTP::header exists X-Forwarded-Proto] } {
+              HTTP::header insert "X-Forwarded-Proto" "https"
+            }
+            if {not [HTTP::header exists X-Forwarded-For] } {
+              HTTP::header insert "X-Forwarded-For" [IP::remote_addr]
+            }
+          }
       pool_name: "pl.docker-registry.tools.springer.com.5000"
       pool_members_port: 5000
       server:
@@ -148,6 +163,21 @@ manifest including the `ansible-deploy` job:
       - "/CloudFoundry/docker-registry.tools.springer.com"
       irules:
       - name: "/CloudFoundry/ir.docker-registry.tools.springer.com"
+        content: |
+          when HTTP_REQUEST {
+            if {not [HTTP::header exists Docker-Distribution-Api-Version] } {
+	      HTTP::header insert "Docker-Distribution-Api-Version" "registry/2.0"
+            }
+            if {not [HTTP::header exists X-Real-IP] } {
+              HTTP::header insert "X-Real-IP" [IP::remote_addr]
+            }
+            if {not [HTTP::header exists X-Forwarded-Proto] } {
+              HTTP::header insert "X-Forwarded-Proto" "https"
+            }
+            if {not [HTTP::header exists X-Forwarded-For] } {
+              HTTP::header insert "X-Forwarded-For" [IP::remote_addr]
+            }
+          }
       pool_name: "pl.docker-registry.tools.springer.com.5000"
       pool_members_port: 5000
       server:
