@@ -5,11 +5,11 @@ set -e -x
 
 # Install libraries
 mkdir -p ${BOSH_INSTALL_TARGET}/library
-libs=$(find library -maxdepth 1 -type d  ! -path library)
+libs=$(find library -maxdepth 1 -iname '*.py' ! -path library)
 if [ "${libs}" ]; then
   echo "Adding libraries ..."
   for lib in ${libs}; do
-      cp -av ${lib}/* ${BOSH_INSTALL_TARGET}/library/
+      cp -av ${lib} ${BOSH_INSTALL_TARGET}/library/
   done
 fi
 
