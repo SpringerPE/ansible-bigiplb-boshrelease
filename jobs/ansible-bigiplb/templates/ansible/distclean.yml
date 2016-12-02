@@ -41,8 +41,8 @@
         password: "{{ f5_pass }}"
         validate_certs: "{{ f5_ssl_validate }}"
         when: item.content is defined and item.content
-     with_items: "{{ f5_irules | default([]) }}"
-     delegate_to: "{{ groups.client[0] }}"
+      with_items: "{{ f5_irules | default([]) }}"
+      delegate_to: "{{ groups.client[0] }}"
 
     - name: Get current facts for the F5 pool
       bigip_facts:
