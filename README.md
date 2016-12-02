@@ -58,7 +58,7 @@ finally define the `properties` of the VIP and F5 device:
         content: |
           when HTTP_REQUEST {
             if {not [HTTP::header exists Docker-Distribution-Api-Version] } {
-	      HTTP::header insert "Docker-Distribution-Api-Version" "registry/2.0"
+              HTTP::header insert "Docker-Distribution-Api-Version" "registry/2.0"
             }
             if {not [HTTP::header exists X-Real-IP] } {
               HTTP::header insert "X-Real-IP" [IP::remote_addr]
@@ -119,7 +119,7 @@ the deployment, you have to define an errand job:
       virtual_server_port: 443
       irules:
       - name: "/CloudFoundry/ir.docker-registry.tools.springer.com"
-        content: -
+        content: true
       pool_name: "pl.docker-registry.tools.springer.com.5000"
       pool_members_port: 5000
       server:
