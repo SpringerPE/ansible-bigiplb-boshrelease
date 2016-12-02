@@ -29,7 +29,7 @@
       delegate_to: "{{ groups.client[0] }}"
 
     - name: Loading irules content
-      include_vars: irules.yml
+      include_vars: irules.json
 
     - name: Define irules
       bigip_irule_bigsuds:
@@ -40,7 +40,7 @@
         user: "{{ f5_user }}"
         password: "{{ f5_pass }}"
         validate_certs: "{{ f5_ssl_validate }}"
-        when: item.content is defined and item.content
+      when: item.content is defined and item.content
       with_items: "{{ f5_irules | default([]) }}"
       delegate_to: "{{ groups.client[0] }}"
 
