@@ -25,8 +25,8 @@
         user: "{{ f5_user }}"
         password: "{{ f5_pass }}"
         validate_certs: "{{ f5_ssl_validate }}"
-      delegate_to: "{{ groups.client[0] }}"
       with_items: "{{ groups['members'] }}"
+      delegate_to: "{{ groups.client[0] }}"
       ignore_errors: yes
 
     - name: Pause until all local active connections are closed
@@ -50,7 +50,7 @@
         user: "{{ f5_user }}"
         password: "{{ f5_pass }}"
         validate_certs: "{{ f5_ssl_validate }}"
-      delegate_to: "{{ groups.client[0] }}"
       with_items: "{{ groups['members'] }}"
+      delegate_to: "{{ groups.client[0] }}"
       ignore_errors: yes
 

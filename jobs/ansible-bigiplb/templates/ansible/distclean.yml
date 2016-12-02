@@ -28,6 +28,22 @@
         validate_certs: "{{ f5_ssl_validate }}"
       delegate_to: "{{ groups.client[0] }}"
 
+    - name: Loading irules content
+      include_vars: irules.yml
+
+    - name: Define irules
+      bigip_irule_bigsuds:
+        state: absent
+        name: "{{ item['name'].split('/')[-1] }}"
+        partition: "{{ f5_partition }}"
+        server: "{{ f5_server }}"
+        user: "{{ f5_user }}"
+        password: "{{ f5_pass }}"
+        validate_certs: "{{ f5_ssl_validate }}"
+        when: item.content is defined and item.content
+     with_items: "{{ f5_irules | default([]) }}"
+     delegate_to: "{{ groups.client[0] }}"
+
     - name: Get current facts for the F5 pool
       bigip_facts:
         filter: "{{ f5_pool_name }}"

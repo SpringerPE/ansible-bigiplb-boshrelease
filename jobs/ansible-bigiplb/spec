@@ -9,6 +9,8 @@ packages:
 templates:
   bin/pre-start: bin/pre-start
   ansible/inventory.erb: ansible/inventory
+  ansible/irules.yml.erb: ansible/irules.yml
+  ansible/env.sh: ansible/env.sh
   ansible/post-start.yml: ansible/50-post-start.yml
   ansible/drain.yml: ansible/50-drain.yml
   ansible/start.yml: ansible/start.yml
@@ -48,6 +50,7 @@ properties:
     - name: "/Common/irule-01"
     - name: "/MyPartition/irule-02"
       content: "when HTTP_REQUEST {HTTP::redirect 'https://[HTTP::host][HTTP::uri]'}"
+      state: present
   ansible_bigiplb.pool_name:
     description: Pool name to create in the F5. Defaults to instance IP of each vm.
   ansible_bigiplb.pool_members:
