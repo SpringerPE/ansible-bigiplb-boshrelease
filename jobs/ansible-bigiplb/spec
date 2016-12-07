@@ -10,6 +10,7 @@ templates:
   bin/pre-start: bin/pre-start
   ansible/inventory.erb: ansible/inventory
   ansible/irules.json.erb: ansible/irules.json
+  ansible/monitors.json.erb: ansible/monitors.json
   ansible/env.sh: ansible/env.sh
   ansible/post-start.yml: ansible/50-post-start.yml
   ansible/drain.yml: ansible/50-drain.yml
@@ -77,9 +78,20 @@ properties:
     description: Sets the ramp-up time (in seconds) to gradually ramp up the load on newly added or freshly detected up pool members.
     default: 0
   ansible_bigiplb.pool_monitors:
-    description: List of Health monitors.
+    description: List of Health monitors. If you provide type parameter it will be defined, otherwise it is just a reference. Monitor types are tcp, tcp_echo, tcp_half_open and http
+    example:
+    - name: "/MyPartition/monitor"
+      type: "tcp"
+      timeout: 15
+      interval: 300
+      time_until_up: 30
+      parent: "tcp"
+      parent_partition: "Common"
+      send: "12345678"
+      receive: "AMQP"
+    - name: "/Common/tcp"
     default:
-    - "/Common/tcp"
+    - name: "/Common/tcp"
   ansible_bigiplb.pool_monitors_rule:
     description: Monitor rule type when there are more than one monitor, and_list or m_of_n
     default: and_list

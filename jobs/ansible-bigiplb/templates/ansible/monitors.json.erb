@@ -1,0 +1,25 @@
+<%=
+  params = {
+    'f5_pool_monitors' => []
+  }
+  if_p("ansible_bigiplb.pool_monitors") do |monitors|
+    monitors.each do |mon|
+      monitor = {
+        'name' => mon['name']
+      }
+      if mon['type']
+        monitor['type'] = mon['type']
+        monitor['send'] = mon['send']
+        monitor['receive'] = mon['receive']
+        monitor['receive_disable'] = mon['receive_disable'] if mon['receive_disable']
+        monitor['timeout'] = mon['timeout'] if mon['timeout']
+        monitor['interval'] = mon['interval'] if mon['interval']
+        monitor['time_until_up'] = mon['time_until_up'] if mon['time_until_up']
+        monitor['parent'] = mon['parent'] if mon['parent']
+        monitor['parent_partition'] = mon['parent_partition'] if mon['parent_partition']
+      end
+      params['f5_pool_monitors'].push(monitor)
+    end
+  end
+  JSON.dump(params)
+%>

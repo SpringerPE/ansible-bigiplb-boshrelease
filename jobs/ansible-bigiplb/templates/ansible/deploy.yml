@@ -15,7 +15,7 @@
   tasks:
     - include: start.yml
 
-    - include: post-start.yml
+    - include: node.yml
 
     - include: finish.yml
 

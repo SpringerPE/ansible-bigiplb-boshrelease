@@ -31,7 +31,7 @@
     - name: Loading irules content
       include_vars: irules.json
 
-    - name: Define irules
+    - name: Delete irules
       bigip_irule_bigsuds:
         state: absent
         name: "{{ item['name'].split('/')[-1] }}"
@@ -90,5 +90,32 @@
         user: "{{ f5_user }}"
         password: "{{ f5_pass }}"
         validate_certs: "{{ f5_ssl_validate }}"
+      delegate_to: "{{ groups.client[0] }}"
+
+    - name: Delete tcp monitors
+      bigip_monitor_tcp:
+        state: absent
+        type: "{{ item.type }}"
+        name: "{{ item['name'].split('/')[-1] }}"
+        partition: "{{ f5_partition }}"
+        server: "{{ f5_server }}"
+        user: "{{ f5_user }}"
+        password: "{{ f5_pass }}"
+        validate_certs: "{{ f5_ssl_validate }}"
+      when: item.type is defined and (item.type == 'tcp' or item.type == 'tcp_echo' or item.type == 'tcp_half_open')
+      with_items: "{{ f5_pool_monitors | default([]) }}"
+      delegate_to: "{{ groups.client[0] }}"
+
+    - name: Delete http monitors
+      bigip_monitor_http:
+        state: absent
+        name: "{{ item['name'].split('/')[-1] }}"
+        partition: "{{ f5_partition }}"
+        server: "{{ f5_server }}"
+        user: "{{ f5_user }}"
+        password: "{{ f5_pass }}"
+        validate_certs: "{{ f5_ssl_validate }}"
+      when: item.type is defined and item.type == 'http'
+      with_items: "{{ f5_pool_monitors | default([]) }}"
       delegate_to: "{{ groups.client[0] }}"
 

@@ -1,6 +1,51 @@
 ---
 # First (pre-start) tasks
 
+- name: Loading monitors definitons
+  include_vars: monitors.json
+
+- name: Define required tcp monitors
+  bigip_monitor_tcp:
+    state: present
+    type: "{{ item.type }}"
+    name: "{{ item['name'].split('/')[-1] }}"
+    send: "{{ item.send | default(omit) }}"
+    receive: "{{ item.receive | default(omit) }}"
+    parent: "{{ item.parent | default(omit) }}"
+    parent_partition: "{{ item.parent_partition | default(omit) }}"
+    timeout: "{{ item.timeout | default(omit) }}"
+    interval: "{{ item.interval | default(omit) }}"
+    time_until_up: "{{ item.time_until_up | default(omit) }}"
+    partition: "{{ f5_partition }}"
+    server: "{{ f5_server }}"
+    user: "{{ f5_user }}"
+    password: "{{ f5_pass }}"
+    validate_certs: "{{ f5_ssl_validate }}"
+  when: item.type is defined and (item.type == 'tcp' or item.type == 'tcp_echo' or item.type == 'tcp_half_open')
+  with_items: "{{ f5_pool_monitors | default([]) }}"
+  delegate_to: "{{ groups.client[0] }}"
+
+- name: Define required http monitors
+  bigip_monitor_http:
+    state: present
+    name: "{{ item['name'].split('/')[-1] }}"
+    send: "{{ item.send | default(omit) }}"
+    receive: "{{ item.receive | default(omit) }}"
+    receive_disable: "{{ item.receive_disable | default(omit) }}"
+    parent: "{{ item.parent | default(omit) }}"
+    parent_partition: "{{ item.parent_partition | default(omit) }}"
+    timeout: "{{ item.timeout | default(omit) }}"
+    interval: "{{ item.interval | default(omit) }}"
+    time_until_up: "{{ item.time_until_up | default(omit) }}"
+    partition: "{{ f5_partition }}"
+    server: "{{ f5_server }}"
+    user: "{{ f5_user }}"
+    password: "{{ f5_pass }}"
+    validate_certs: "{{ f5_ssl_validate }}"
+  when: item.type is defined and item.type == 'http'
+  with_items: "{{ f5_pool_monitors | default([]) }}"
+  delegate_to: "{{ groups.client[0] }}"
+
 - name: Make sure the pool exists
   bigip_pool:
     state: present
@@ -8,7 +53,7 @@
     lb_method: "{{ f5_pool_lb_method }}"
     slow_ramp_time: "{{ f5_pool_slow_ramp_time }}"
     monitor_type: "{{ f5_pool_monitors_rule }}"
-    monitors: "{{ f5_pool_monitors }}"
+    monitors: "{{ f5_pool_monitors | map(attribute='name') | list }}"
     quorum: "{{ f5_pool_monitors_quorum | default(omit) }}"
     partition: "{{ f5_partition }}"
     server: "{{ f5_server }}"
