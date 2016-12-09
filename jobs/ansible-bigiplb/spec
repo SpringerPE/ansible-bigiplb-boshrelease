@@ -15,6 +15,7 @@ templates:
   ansible/post-start.yml: ansible/50-post-start.yml
   ansible/drain.yml: ansible/50-drain.yml
   ansible/start.yml: ansible/start.yml
+  ansible/node.yml: ansible/node.yml
   ansible/pre-start.yml: ansible/50-pre-start.yml
   ansible/pre-bootstrap.yml: ansible/50-pre-bootstrap.yml
   ansible/distclean.yml: ansible/50-distclean.yml
