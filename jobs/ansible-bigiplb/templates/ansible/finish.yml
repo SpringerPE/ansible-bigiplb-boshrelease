@@ -22,6 +22,7 @@
   bigip_virtual_server:
     state: present
     name: "{{ f5_vip_name }}"
+    default_persistence_profile: "{{ f5_vip_persistence_profile | default(omit) }}"
     destination: "{{ f5_vip_address }}"
     port: "{{ f5_vip_port }}"
     pool: "{{ f5_pool_name }}"

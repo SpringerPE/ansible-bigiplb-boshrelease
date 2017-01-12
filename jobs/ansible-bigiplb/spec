@@ -37,6 +37,9 @@ properties:
   ansible_bigiplb.virtual_server_vlans:
     description: List of enabled Vlans for the virtual server (Full path items).
     default: []
+  ansible_bigiplb.virtual_server_persistence_profile:
+    description: Vserver persistence profile
+    example: "/Common/source_addr"
   ansible_bigiplb.virtual_server_profiles:
     description: List of profiles to be used in the virtual server (all kind of profiles, http, ssl, client ... full path items)
     default: []

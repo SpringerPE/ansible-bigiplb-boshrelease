@@ -21,6 +21,7 @@ f5_vip_port=<%= p("ansible_bigiplb.virtual_server_port") %>
 f5_vip_vlans='<%= p("ansible_bigiplb.virtual_server_vlans") %>'
 f5_vip_profiles='<%= p("ansible_bigiplb.virtual_server_profiles") %>'
 f5_vip_irules='<%= getlv(p("ansible_bigiplb.irules")) %>'
+<% if_p("ansible_bigiplb.virtual_server_persistence_profile") do |vippersistence| %>f5_vip_persistence_profile=<%= vippersistence %><% end %>
 <% if_p("ansible_bigiplb.virtual_server_snat") do |vipsnat| %>f5_vip_snat=<%= vipsnat %><% end %>
 <% if_p("ansible_bigiplb.virtual_server_state") do |vipstate| %>f5_vip_state=<%= vipstate %><% end %>
 f5_pool_member_drain_timeout=<%= p("ansible_bigiplb.pool_member_drain_timeout") %>
