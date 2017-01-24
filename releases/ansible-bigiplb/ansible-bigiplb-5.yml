@@ -1,0 +1,20 @@
+---
+packages:
+- name: ansible-bigiplb
+  version: 81d44d59c8bc0c07400914418c99685cbbc150ab
+  fingerprint: 81d44d59c8bc0c07400914418c99685cbbc150ab
+  sha1: b3c8f214070e8294fe7d9e580dbbd5fe540b50d7
+  dependencies: []
+jobs:
+- name: ansible-bigiplb
+  version: 9a876f4c2fd7626d70459e849bc228dbbc370a04
+  fingerprint: 9a876f4c2fd7626d70459e849bc228dbbc370a04
+  sha1: 05742cc2e1ea5bf0232fe9b4edad5d67c569fa75
+license:
+  version: dd2876e08d0816dd876506d44442c2e814724a1d
+  fingerprint: dd2876e08d0816dd876506d44442c2e814724a1d
+  sha1: 43222289342be8109fe08963938bc8a57261df4c
+commit_hash: 2ecd2b55
+uncommitted_changes: true
+name: ansible-bigiplb
+version: '5'
