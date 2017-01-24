@@ -224,9 +224,9 @@ All actions/playbooks (thanks to ansible) are idempotent.
 
 # Author
 
-José Riguera López (jose.riguera@springer.com)
+SpringerNature Platform Engineering, José Riguera López (jose.riguera@springer.com)
 
-SpringerNature Platform Engineering
+Copyright 2017 Springer Nature
 
 
 
