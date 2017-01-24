@@ -16,5 +16,5 @@ license:
   sha1: 6c30310abc21dbf095ebee15ae68accb4298c93f
 commit_hash: f9d1fc69
 uncommitted_changes: true
-name: ansible-bigiplb-boshrelease
+name: ansible-bigiplb
 version: '4'
