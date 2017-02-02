@@ -222,6 +222,11 @@ re-defining a inventory with the variables needed by the playbooks.
 All actions/playbooks (thanks to ansible) are idempotent.
 
 
+# Creating a new final release
+
+Run: `./bosh_final_release`
+
+
 # Author
 
 SpringerNature Platform Engineering, José Riguera López (jose.riguera@springer.com)
