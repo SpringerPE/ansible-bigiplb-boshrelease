@@ -101,8 +101,8 @@ properties:
       time_until_up: 30
       parent: "http"
       parent_partition: "Common"
-      send: "GET /api/v1/status HTTP/1.1\r\nUser-Agent: F5-healthcheck\r\nConnection: Close\r\n\r\n"
-      receive: "^HTTP/1\.1 200 OK"
+      send: 'GET /api/v1/status HTTP/1.1\r\nUser-Agent: F5-healthcheck\r\nConnection: Close\r\n\r\n'
+      receive: '\^HTTP/1\\.1 200 OK'
     - name: "/Common/tcp"
     default:
     - name: "/Common/tcp"
