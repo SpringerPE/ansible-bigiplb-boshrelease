@@ -9,6 +9,8 @@
     state: present
     type: "{{ item.type }}"
     name: "{{ item['name'].split('/')[-1] }}"
+    port: "{{ item.port | default(omit) }}"
+    ip: "{{ item.ip | default(omit) }}"
     send: "{{ item.send | default(omit) }}"
     receive: "{{ item.receive | default(omit) }}"
     parent: "{{ item.parent | default(omit) }}"
@@ -29,6 +31,8 @@
   bigip_monitor_http:
     state: present
     name: "{{ item['name'].split('/')[-1] }}"
+    port: "{{ item.port | default(omit) }}"
+    ip: "{{ item.ip | default(omit) }}"
     send: "{{ item.send | default(omit) }}"
     receive: "{{ item.receive | default(omit) }}"
     receive_disable: "{{ item.receive_disable | default(omit) }}"

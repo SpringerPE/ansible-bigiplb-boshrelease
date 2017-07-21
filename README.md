@@ -135,6 +135,59 @@ then run: `bosh run errand f5-clean` to delete all F5 settings. After that
 you can run `bosh delete deployment <name>`.
 
 
+# Mysql-Galera cluster example
+
+This is an example about how to define a MySQL Galera cluster using the
+[cf-myslq-release](https://github.com/cloudfoundry/cf-mysql-release) bosh release.
+Here the proxies are not used, so it is a deployment of 2 mysql nodes and one arbitrator.
+The reason not to use a proxy is just to simplify the infrastructure, and all they
+functionality has been defined in the F5. Also, optionally, it helps to make the routing
+persistent to the same backend from the same client by using an irule. You do not need
+the irule if you know the clients are able to handle (or do not cause) deadlocks
+and rollbacks.
+
+```
+  jobs:
+  - release: cf-mysql
+    name: mysql
+  - name: smoke-tests-user
+    release: cf-mysql
+  - name: ansible-hooks
+    release: ansible
+  - name: ansible-bigiplb
+    release: ansible-bigiplb
+    properties:
+      ansible_bigiplb:
+        virtual_server_name: "vs.exp-mysql-galera.dc.springernature.pe.3306"
+        virtual_server_ip: "2.2.2.2"
+        virtual_server_port: 3306
+        virtual_server_profiles:
+        - "/Common/tcp"
+        irules:
+        - name: "/CloudFoundry/ir00_persistence.exp-mysql-galera.dc.springernature.pe"
+          content: "when CLIENT_ACCEPTED { persist uie \"[IP::client_addr]\" }"
+        pool_name: "pl.exp-mysql-galera.dc.springernature.pe.3306"
+        pool_members_port: 3306
+        pool_monitors:
+       - name: "/Cloudfoundry/hm.exp-mysql-galera.dc.springernature.pe.9200"
+         port: 9200
+         type: "http"
+         parent: "http"
+         parent_partition: "Common"
+         timeout: 4
+         interval: 5
+         time_until_up: 30
+         send: "GET /api/v1/status HTTP/1.1\r\nUser-Agent: F5-healthcheck\r\nConnection: Close\r\n\r\n"
+         receive: "^HTTP/1\.1 200 OK"
+        server:
+        - device: "XXXXXXXXXXXX"
+          ip: "1.1.1.1"
+          user: "user"
+          password: "pass"
+          partition: "CloudFoundry"
+```
+
+
 ## Additional features
 
 There is another way to use this release: as an errand job. Useful if you do not

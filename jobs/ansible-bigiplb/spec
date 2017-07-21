@@ -82,9 +82,9 @@ properties:
     description: Sets the ramp-up time (in seconds) to gradually ramp up the load on newly added or freshly detected up pool members.
     default: 0
   ansible_bigiplb.pool_monitors:
-    description: List of Health monitors. If you provide type parameter it will be defined, otherwise it is just a reference. Monitor types are tcp, tcp_echo, tcp_half_open and http
+    description: List of Health monitors. If you provide type parameter it will be defined, otherwise it is just a reference. Monitor types are tcp, tcp_echo, tcp_half_open and http. Parameters ip and/or port are need only if the monitor is not on the same ip/port as the backend node.
     example:
-    - name: "/MyPartition/monitor"
+    - name: "/MyPartition/Rabbitmq"
       type: "tcp"
       timeout: 15
       interval: 300
@@ -93,6 +93,16 @@ properties:
       parent_partition: "Common"
       send: "12345678"
       receive: "AMQP"
+    - name: "/MyPartition/Mysql-Galera-Healthcheck"
+      port: 9200
+      type: "http"
+      timeout: 5
+      interval: 10
+      time_until_up: 30
+      parent: "http"
+      parent_partition: "Common"
+      send: "GET /api/v1/status HTTP/1.1\r\nUser-Agent: F5-healthcheck\r\nConnection: Close\r\n\r\n"
+      receive: "^HTTP/1\.1 200 OK"
     - name: "/Common/tcp"
     default:
     - name: "/Common/tcp"

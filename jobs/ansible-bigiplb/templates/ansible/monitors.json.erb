@@ -18,6 +18,12 @@
         monitor['parent'] = mon['parent'] if mon['parent']
         monitor['parent_partition'] = mon['parent_partition'] if mon['parent_partition']
       end
+      if mon['ip']
+        monitor['ip'] = mon['ip']
+      end
+      if mon['port']
+        monitor['port'] = mon['port']
+      end
       params['f5_pool_monitors'].push(monitor)
     end
   end
