@@ -4,6 +4,8 @@
 - name: Add a new pool member
   bigip_pool_member:
     state: present
+    session_state: "enabled"
+    monitor_state: "enabled"
     pool: "{{ f5_pool_name }}"
     host: "{{ hostvars[item]['ansible_host'] }}"
     port: "{{ hostvars[item]['port'] }}"
