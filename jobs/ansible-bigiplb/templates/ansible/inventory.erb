@@ -54,14 +54,17 @@ nodes
 
 <% if_p("ansible_bigiplb.pool_members") do |members| %>
 # Aditional nodes ...
-[nodes]
-<% members.each do |member| %><%= member["name"] %> <% if member["ip"] %>ansible_host=<%= member["ip"] %><% end %>
+[nodes:children]
+<% members.each do |member| %><%= member["name"] %>
 <% end %>
 
 <% members.each do |member| %>
 [<%= member["name"] %>]
+<%= member["name"] %> <% if member["ip"] %>ansible_host=<%= member["ip"] %><% end %>
+
+[<%= member["name"] %>:vars]
 <% if member["port"] %>port=<%= member["port"] %><% else %><% if_p("ansible_bigiplb.pool_members_port") do |pp| %>port=<%= pp %><% end.else do %>port=<%= p("ansible_bigiplb.virtual_server_port") %><% end %><% end %>
-<% if member["description"] %>description='<%= member["description"] %>'<% end %>
+<% if member["description"] %>description='<%= member["description"] %>'<% else %>description='<%= member["name"] %>'<% end %>
 <% end %>
 
 # and current node empty
